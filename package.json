@@ -9,13 +9,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": " nodemon --no-deprecation server.js",
-    "start:prod": "set NODE_ENV=production &&  nodemon server.js",
+    "start:prod": "set NODE_ENV=production &&  nodemon --no-deprecation server.js",
     "debug": "ndb server.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.3.1",
     "express": "^4.16.4",
+    "express-rate-limit": "^8.4.1",
+    "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^5.13.23",
     "morgan": "^1.10.1",
