@@ -3,6 +3,9 @@ const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const hpp = require('hpp');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -14,6 +17,7 @@ const app = express();
 //global MiddleWares
 //set security http headers
 app.use(helmet());
+
 // app.use((req, res, next) => {
 //   console.log('Log from middleWare');
 //   next();
@@ -39,11 +43,31 @@ app.use(
   })
 );
 
+//data sanitization agaist noSQL query injection
+app.use(mongoSanitize());
+
+//data sanitization agaist XSS
+app.use(xss());
+
+//prevent paramter pollution
+app.use(
+  hpp({
+    whitelist: [
+      'duration',
+      'ratingsAverage',
+      'ratingsQuantity',
+      'maxGroupSize',
+      'difficulty',
+      'price'
+    ]
+  })
+);
+
 //serving static files
 app.use(express.static(`${__dirname}/public`));
 
 //test middleware
-app.user((req, res, next) => {
+app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
 
   next();
