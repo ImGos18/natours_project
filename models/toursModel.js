@@ -109,6 +109,13 @@ const tourSchema = new mongoose.Schema(
   }
 );
 
+//virtual populate
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour',
+  localField: 'id'
+});
+
 tourSchema.virtual('durationWeeks').get(function() {
   return this.duration / 7;
 });
@@ -131,6 +138,15 @@ tourSchema.pre('save', function(next) {
 // });
 
 //QUERY MIDDLEWARE
+
+tourSchema.pre(/^find/, function(next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt'
+  });
+  next();
+});
+
 tourSchema.pre(/^find/, function(next) {
   this.find({ secretTour: { $ne: true } });
   this.start = Date.now();
@@ -143,7 +159,7 @@ tourSchema.pre(/^find/, function(next) {
 
 tourSchema.post(/^find/, function(docs, next) {
   console.log(`query took ${Date.now() - this.start} miliseconds`);
-  //console.log(docs);
+  // console.log(docs);
   next();
 });
 
