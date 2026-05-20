@@ -113,7 +113,7 @@ const tourSchema = new mongoose.Schema(
 tourSchema.virtual('reviews', {
   ref: 'Review',
   foreignField: 'tour',
-  localField: 'id'
+  localField: '_id'
 });
 
 tourSchema.virtual('durationWeeks').get(function() {
